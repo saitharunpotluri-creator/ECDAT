@@ -1,0 +1,73 @@
+rules:
+  # 1. Quantum-Vulnerable Asymmetric Key Generation (RSA, EC, Diffie-Hellman)
+  - id: ecdat-asymmetric-key-exchange
+    patterns:
+      - pattern-either:
+          - pattern: KeyPairGenerator.getInstance("RSA")
+          - pattern: KeyPairGenerator.getInstance("EC")
+          - pattern: KeyPairGenerator.getInstance("DiffieHellman")
+          - pattern: KeyPairGenerator.getInstance("DH")
+          - pattern: KeyPairGenerator.getInstance("DSA")
+          - pattern: KeyAgreement.getInstance("DiffieHellman")
+          - pattern: KeyAgreement.getInstance("ECDH")
+    message: "Critical: Quantum-vulnerable asymmetric key generation detected."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      algorithm: Quantum-Vulnerable Key Exchange
+      riskLevel: Critical
+      pqc_safe: false
+
+  # 2. Legacy / Broken Hashing Algorithms (MD5, SHA-1)
+  - id: ecdat-legacy-hash-digest
+    patterns:
+      - pattern-either:
+          - pattern: MessageDigest.getInstance("MD5")
+          - pattern: MessageDigest.getInstance("SHA-1")
+          - pattern: MessageDigest.getInstance("SHA1")
+          - pattern: MessageDigest.getInstance("MD2")
+          - pattern: MessageDigest.getInstance("MD4")
+    message: "High: Insecure/broken hash function detected."
+    languages: [java]
+    severity: WARNING
+    metadata:
+      algorithm: Legacy-Hash
+      riskLevel: High
+      pqc_safe: false
+
+  # 3. Broken Legacy Symmetric Ciphers (DES, 3DES, RC4) & Insecure Modes
+  - id: ecdat-legacy-symmetric-ciphers
+    patterns:
+      - pattern-either:
+          - pattern: Cipher.getInstance("DES")
+          - pattern: Cipher.getInstance("DESede")
+          - pattern: Cipher.getInstance("RC4")
+          - pattern: Cipher.getInstance("ARCFOUR")
+          - pattern: Cipher.getInstance("Blowfish")
+          - pattern: Cipher.getInstance("RSA/ECB/PKCS1Padding")
+          - pattern: Cipher.getInstance("AES/ECB/PKCS5Padding")
+          - pattern: Cipher.getInstance("AES/ECB/NoPadding")
+    message: "High: Insecure symmetric cipher or weak block mode detected."
+    languages: [java]
+    severity: WARNING
+    metadata:
+      algorithm: Legacy-Cipher
+      riskLevel: High
+      pqc_safe: false
+
+  # 4. Quantum-Vulnerable Digital Signatures
+  - id: ecdat-quantum-signatures
+    patterns:
+      - pattern-either:
+          - pattern: Signature.getInstance("SHA256withRSA")
+          - pattern: Signature.getInstance("SHA512withRSA")
+          - pattern: Signature.getInstance("MD5withRSA")
+          - pattern: Signature.getInstance("SHA256withECDSA")
+          - pattern: Signature.getInstance("SHA1withDSA")
+    message: "Critical: Quantum-vulnerable digital signature scheme detected."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      algorithm: Quantum-Vulnerable Signature
+      riskLevel: Critical
+      pqc_safe: false
