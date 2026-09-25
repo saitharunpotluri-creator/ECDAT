@@ -24,3 +24,6 @@ Backend (Scanning Engine)
 Framework: FastAPI (Python)
 Analysis Engine: Semgrep
 Data Standard: CycloneDX (OWASP)
+
+📺 See it in action: Check out the live demonstration of ECDAT on https://lnkd.in/p/dceEYudH 
+
